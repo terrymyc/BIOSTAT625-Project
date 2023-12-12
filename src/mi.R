@@ -19,7 +19,7 @@ pat_binary$povertygroup <- as.factor(pat_binary$povertygroup)
 pat_binary$newrace <- as.factor(pat_binary$newrace)
 
 # inspect intraclass correlation (ICC)
-ICC1(aov(count ~ as.factor(patcid), data = pat)) # 0.04438785
+#ICC1(aov(count ~ as.factor(patcid), data = pat_count)) # 0.04438785
 
 # ------------------------------------------------------------
 # Multiple imputation using minute-level data only
@@ -41,7 +41,21 @@ plot(imp_binary)
 densityplot(imp_count)
 
 # extract imputed data
-imp_count_wide <- complete(imp_count, "broad")
-imp_binary_wide <- complete(imp_binary, "broad")
+imp_count_wide <- complete(imp_count, "broad") %>%
+  select(4, 8, 12, 16, 20) %>%
+  # transform all columns to sed_min, 1 if count = 0-99, 0 if count >= 100
+  mutate_all(list(~ ifelse(. < 100, 1, 0))) %>%
+  # rename columns as imp1_count, imp2_count, etc.
+  rename_all(list(~ paste0("imp", 1:5, "_count")))
 
+imp_binary_wide <- complete(imp_binary, "broad") %>%
+  select(4, 8, 12, 16, 20) %>%
+  # rename columns as imp1_binary, imp2_binary, etc.
+  rename_all(list(~ paste0("imp", 1:5, "_binary")))
+
+# combine imputed data
+result_df <- cbind(imp_count_wide, imp_binary_wide)
+
+# add back patcid
+result_df <- cbind(pat_count[, 1], result_df)
 
