@@ -89,7 +89,7 @@ pat_binary$patcid <- as.integer(pat_binary$patcid)
 # ------------------------------------------------------------
 
 # how many minutes are missing per person
-fig1 <- pat_count %>%
+pat_count %>%
   group_by(patcid) %>%
   summarise(n_missing_min = sum(is.na(count))) %>%
   # ggplot to show the distribution with a line indicating the mean
@@ -99,9 +99,10 @@ fig1 <- pat_count %>%
   labs(x = "Missing minutes between 8 a.m. and 10 p.m. over 7 days",
        y = "Number of participants") +
   theme(text = element_text(size = 16))
+ggsave("BIOSTAT625-Project/results/figures/missing_min_pp.png", width = 9, height = 5, dpi = 600)
 
 # density plot to show distributions of sed_min and gpaqsedall
-fig2 <- pat_binary %>%
+pat_binary %>%
   # filter out id without valid sed_min
   filter(patcid %in% id) %>%
   group_by(patcid) %>%
@@ -116,6 +117,7 @@ fig2 <- pat_binary %>%
   theme(text = element_text(size = 16)) +
   scale_fill_manual(values = c("Sensor" = "red", "Self-report" = "blue"),
                     name = "Data source")
+ggsave("BIOSTAT625-Project/results/figures/sed_min_density_observed.png", width = 9, height = 5, dpi = 600)
 
 plt.minuteid <- histogram(~ minuteid | is.na(count), data = pat_count,
                           xlab = "Time Stamp") # minuteid as a proxy of timestamp
@@ -123,6 +125,8 @@ plt.dow <- histogram(~ dow | is.na(count), data = pat_count,
                      xlab = "Day of Week") # more missing on Sat and Sun
 plt.hour <- histogram(~ hour | is.na(count), data = pat_count,
                       xlab = "Hour of Day") # more missing in the morning and evening
+missing_pattern <- grid.arrange(plt.minuteid, plt.dow, plt.hour, ncol = 3)
+ggsave("BIOSTAT625-Project/results/figures/missing_pattern.png", missing_pattern, width = 12, height = 5, dpi = 600)
 
 plt.dem11 <- histogram(~ dem11 | is.na(count), data = pat_count,
                        xlab = "Marriage Status") # more missing if single
