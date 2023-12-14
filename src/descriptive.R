@@ -99,7 +99,7 @@ pat_count %>%
   labs(x = "Missing minutes between 8 a.m. and 10 p.m. over 7 days",
        y = "Number of participants") +
   theme(text = element_text(size = 16))
-ggsave("BIOSTAT625-Project/results/figures/missing_min_pp.png", width = 9, height = 5, dpi = 600)
+ggsave("BIOSTAT625-Project/results/figures/missing_min_pp.png", width = 6, height = 5, dpi = 600)
 
 # density plot to show distributions of sed_min and gpaqsedall
 pat_binary %>%
@@ -108,7 +108,7 @@ pat_binary %>%
   group_by(patcid) %>%
   summarise(sed_min = sum(as.numeric(sed_min), na.rm = TRUE)/7) %>%
   # cbind with pat_svy to get gpaqsedall
-  left_join(pat_svy[, c("patcid", "gpaqsedall")], by = "patcid") %>%
+  left_join(pat_svy[, c("patcid", "gpaqsedall")], by = "patcißd") %>%
   ggplot(aes(x = sed_min)) +
   geom_density(aes(fill = "Sensor"), alpha = 0.2) +
   geom_density(aes(x = gpaqsedall, fill = "Self-report"), alpha = 0.2) +
@@ -117,7 +117,7 @@ pat_binary %>%
   theme(text = element_text(size = 16)) +
   scale_fill_manual(values = c("Sensor" = "red", "Self-report" = "blue"),
                     name = "Data source")
-ggsave("BIOSTAT625-Project/results/figures/sed_min_density_observed.png", width = 9, height = 5, dpi = 600)
+ggsave("BIOSTAT625-Project/results/figures/sed_min_density_observed.png", width = 6, height = 5, dpi = 600)
 
 plt.minuteid <- histogram(~ minuteid | is.na(count), data = pat_count,
                           xlab = "Time Stamp") # minuteid as a proxy of timestamp
