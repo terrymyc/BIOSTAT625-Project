@@ -13,9 +13,6 @@ The data will not be redistributed through this repository, and scripts will acc
   - `proposal.pdf`: Project proposal document.
   - `report.pdf`: Final project report.
 - `src/`: Source code for the analysis.
-  - `data_preprocessing/`: Scripts for data cleaning and preprocessing.
-  - `imputation_methods/`: Scripts for different imputation methods.
-  - `analysis/`: Scripts for final data analysis and visualization.
 - `results/`: Output from the analysis.
   - `figures/`: Graphs and visualizations.
   - `tables/`: Generated tables and summary statistics.
