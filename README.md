@@ -17,16 +17,6 @@ The data will not be redistributed through this repository, and scripts will acc
   - `figures/`: Graphs and visualizations.
   - `tables/`: Generated tables and summary statistics.
 
-## Reproducing the Analysis
-To reproduce the analysis:
-1. Clone the repository.
-2. Navigate to the `src/` directory.
-3. Run the scripts in the following order:
-   - Data preprocessing scripts in `data_preprocessing/`.
-   - Imputation method scripts in `imputation_methods/`.
-   - Analysis scripts in `analysis/`.
-   Note: The scripts will access the PAT Survey data directly from the host website.
-
 ## Contributors
 - Deji Suolang
 - Kaidar Nurumov
