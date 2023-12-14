@@ -6,6 +6,7 @@ output: pdf_document
 
 ```{r setup, include=FALSE}
 #source("../src/descriptive.R")
+load("../src/ds_workspace.RData")
 ```
 
 
@@ -68,6 +69,11 @@ Linear interpolation is a method of estimating values between two known values i
 We first conducted the multiple imputation for minute-level activity count. To stabilize the variable, we used the square root transformation and back transformed after the imputation. The predictor in the imputation model include: 1) Time-varying variable lagged activity count (square-root transformed), which is the last activity count observed before the one at the missing time point; 2) Hour's position in the day; 3)Individual-level characteristics such as age, gender,race, activity limitation, income/poverty ratio, bmi range. They are the variables proven to be relevant to the sedentary behavior in the literature, and a result of backward covariate selection and variable importance test from the XGboost Tree in the below.
 
 We define the target variable activity count as nonnegative continuous variable. The imputation involved 10 iterations and generated m=5 datasets. Multiple imputation helps us to capture the variability between imputations. It is done with "mi" package i
+
+```{r echo=FALSE, warning=FALSE, out.width="50%", fig.align="center"}
+knitr::include_graphics("../results/figures/count_obs_imp.png")
+```
+
 
 The observed activity count has a mean of 335, while the mean of the imputed value is 581. Given there are more than million data point, we random sampled 10% of them for the diagnostic plot visualizng the observed vs. imputed values diagnostic plot. We observe their distributions are similar.
 
