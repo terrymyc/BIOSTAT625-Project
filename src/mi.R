@@ -54,8 +54,7 @@ imp_count_wide <- complete(imp_count, "broad") %>%
   # create a new column as the average of imputed sedentary minutes and discard the five columns
   mutate(sed_min_count = rowMeans(select(., starts_with("imp")))) %>%
   select(-starts_with("imp")) %>%
-  # divide sed_min_count by 7 to get the average sedentary minutes per day
-  mutate(sed_min_count = sed_min_count / 7)
+  mutate(sed_min_count = sed_min_count)
 summary(imp_count_wide)
 
 imp_binary_wide <- complete(imp_binary, "broad") %>%
@@ -70,12 +69,11 @@ imp_binary_wide <- complete(imp_binary, "broad") %>%
   # create a new column as the average of imputed sedentary minutes and discard the five columns
   mutate(sed_min_binary = rowMeans(select(., starts_with("imp")))) %>%
   select(-starts_with("imp")) %>%
-  # divide sed_min_count by 7 to get the average sedentary minutes per day
-  mutate(sed_min_binary = sed_min_binary / 7)
+  mutate(sed_min_binary = sed_min_binary)
 summary(imp_binary_wide)
 
 # merge imp_count_wide and imp_binary_wide
-result_df <- cbind(imp_count_wide, imp_binary_wide[, 2])
+result_df_mi <- cbind(imp_count_wide, imp_binary_wide[, 2])
 
 # density plot to show distributions of sed_min and gpaqsedall
 pat_binary %>%
