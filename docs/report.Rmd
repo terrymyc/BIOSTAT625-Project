@@ -62,8 +62,18 @@ Complete cases approach is a straightforward method for handling missing data, w
 
 Linear interpolation is a method of estimating values between two known values in a dataset. It assumes a linear relationship between the known values, and it calculates intermediate values based on this assumption. We found the average day time sedentary minutes based on linear interpolation is X, with a variance of X.
 
-### Single Imputation
+### Multiple Imputation
 
+#### Activity count
+We first conducted the multiple imputation for minute-level activity count. To stabilize the variable, we used the square root transformation and back transformed after the imputation. The predictor in the imputation model include: 1) Time-varying variable lagged activity count (square-root transformed), which is the last activity count observed before the one at the missing time point; 2) Hour's position in the day; 3)Individual-level characteristics such as age, gender,race, activity limitation, income/poverty ratio, bmi range. They are the variables proven to be relevant to the sedentary behavior in the literature, and a result of backward covariate selection and variable importance test from the XGboost Tree in the below.
+
+We define the target variable activity count as nonnegative continuous variable. The imputation involved 10 iterations and generated m=5 datasets. Multiple imputation helps us to capture the variability between imputations. It is done with "mi" package i
+
+The observed activity count has a mean of 335, while the mean of the imputed value is 581. Given there are more than million data point, we random sampled 10% of them for the diagnostic plot visualizng the observed vs. imputed values diagnostic plot. We observe their distributions are similar.
+
+After we have the complete dataset of 5, we pooled the estimate by taking the average of activity count from 5 datasets for each individual. Similar to what we have done earlier, we then use activity count threshold to determine whether a minute is a sedentary minutes. This approach multiply imputing activity count provided us a mean of 3,234 minutes of sedentary minutes in a week.
+
+```{r eval=FALSE, include=FALSE}
 #### Stockastic Regression Imputation
 
 It is a method for estimating missing values in a dataset by modeling the relationship between the variable with missing data and other variables in the dataset. The target variable is the missing minute-level activity count. The main predictor is the lagged minute, which is the last activity count value observed before the missing time point. This takes into account the time series feature of the data. Other baseline variables including age, gender, activity limitation, BMI, and position of hour in a day are included in the model as covariates. They are the results of backward selection.
@@ -73,9 +83,9 @@ The activity count is based on the three-axes acceleration detects by wearable d
 It is worth noting that we have considered data points are nested by each respondent, and fit a multilevel regression models with random intercept. It was successful on a small subset of data. However, when applying to the full data, it took very long time to run becasue of the large size of the data and model complexity. Therefore, this part is not presented here.
 
 Apply the model on the train set shows root mean square error to be X, it is acceptable given the range of values. R-squared being X indicated the model explains about x% of the variability. We then generate the prediction for the missing values in full dataset. After having complete data on activity count, we determined whether each minute is a sedentary minutes based on the same criteria. We found the average day time sedentary minutes is X, with a variance of X.
+```
 
-
-### Multiple Imputation
+#### Binary sedentary status
 
 We use multiple imputation to fill the missing minute observations given the relationship between the activity count/binary indicator of sedentary status and three fully-observed minute-level variables (timestamp, day of week, and hour of day). In the following figures, the TRUE side indicates the distribution of participants with missing minute observations. We find that the missingness is not equally distributed across different values of the timestamp, day of week, and hour of day. Specifically, missingness is more likely to happen in the morning and evening, as well as on Saturday and Sunday.
 
@@ -91,6 +101,13 @@ knitr::include_graphics("../results/figures/sed_min_density_imputed.png")
 
 
 ### XGBoost Tree
+
+In addition to multiple imputation we use a machine learning approach where joined accelerometer and survey data are used as covariates to impute activity count/binary indicator. Unlike the previous models we use complete case data to train and test our models and then fill missing values based on the best performing model. For the binary indicator of sedentary minutes we use XGBoost, an efficient regularized boosting algorithm that uses a sequential ensemble of trees to improve model performance. The complete data are split into train (80%) and test (20%) datasets. Overall, to train the model we selected 60 complete case covariates (features) available for the datasets with missing and nonmissing target variable. The model was trained using 5-fold cross validation and the grid of hyperparameters specific to XGBoost with the subsequent selection of the best model based on the overall accuracy. The final model was used to predict the binary activity for the test as well as the data with missing sed_min status. For the test dataset we evaluated the model performance using balanced accuracy, sensitivity and specificity calculated based on the confusion matrix of predicted and observed sedentary behavior cases. Note that for this classification task we ignored the time-series nature of accelerometer data and treated sed_min as a cross-sectional indicator.
+
+
+### Autoregressive Integrated Moving Average and Kalman Smoothing
+
+While the machine learning approach provided a convenient way of filling NAs using ensemble training we did not account for the time series nature of accelerometer count activity data. In this subsection we use ARIMA model for the univariate time series count together with Kalman smoothing (KS). While ARIMA model uses lagged moving average, KS can account for noisy measurement by incorporating information from past and future observations. For a sequence of missing values KS can make a best guess without the data stemming from the transition equation, hence the imputed NAs can take any value including the negative. For our imputed data we replaced all negative imputations with zeros.
 
 ### Comparison of Estimates from Different Appraoches
 
