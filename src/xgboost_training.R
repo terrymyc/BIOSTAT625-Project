@@ -1,4 +1,3 @@
-setwd('C:/Users/kai_kasados/Desktop/UM Fall 2023/625/Final Project')
 rm(list=ls())
 
 library(lubridate)
