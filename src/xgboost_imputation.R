@@ -108,10 +108,12 @@ df$sed_min_imp = ifelse(df$sed_min_imp=='1', 1, 0)
 
 
 ######################################################################################### results
-df = df %>% group_by(patcid) %>% summarise(sed_min_calc = sum(sed_min_calc),
-                                              sed_min_imp = sum(sed_min_imp),
+df = df %>% group_by(patcid) %>% summarise(sed_min_ml_count = sum(sed_min_calc),
+                                           sed_min_ml = sum(sed_min_imp),
                                               count_imp = mean(count_min_imp),
                                               count_imp_total = sum(count_min_imp))
+
+
 
 library(openxlsx)
 write.xlsx(df, 'xgboost.df.xlsx')
