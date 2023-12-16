@@ -69,11 +69,10 @@ data$sed_min_bygr = ifelse(data$count_impby_group<100, 1,0)
 
 final_results = data %>% group_by(patcid) %>% summarise(sed_min_all = sum(sed_min_all),
                                                 sed_min_bygr = sum(sed_min_bygr),
-                                                count_imp_all = mean(count_imp_all),
-                                                count_impby_group = mean(count_impby_group) )
-
+                                                sed_min_arima_all = mean(count_imp_all),
+                                                sed_min_arima = mean(count_impby_group) )
 
 library(openxlsx)
-write.xlsx(pool2, 'pool2_imp.xlsx')
+write.xlsx(final_results, 'pool2_imp.xlsx')
 
 
